@@ -144,6 +144,14 @@ a {
   border-bottom: none;
 }
 
+.list-item-link {
+  flex: 1;
+}
+
+.list-item-link:hover span {
+  color: var(--color-accent-dark);
+}
+
 .list-item-meta {
   font-size: 13px;
   color: var(--color-text-light);
