@@ -346,12 +346,27 @@ a {
   margin-top: 4px;
 }
 
-.roadmap-card-status {
+.roadmap-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-top: 8px;
+}
+
+.roadmap-card-status {
   font-size: 12px;
   padding: 4px 8px;
   border: 1px solid var(--color-border);
   border-radius: 6px;
   background: var(--color-surface);
   color: var(--color-text);
+}
+
+.roadmap-card-delete {
+  font-size: 12px;
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-light);
+  cursor: pointer;
 }

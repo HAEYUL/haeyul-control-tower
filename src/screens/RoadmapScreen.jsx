@@ -30,6 +30,12 @@ function RoadmapScreen() {
     await supabase.from('roadmap_items').update({ status }).eq('id', id)
   }
 
+  async function handleDelete(id) {
+    if (!confirm('이 항목을 삭제할까요?')) return
+    setItems((prev) => prev.filter((item) => item.id !== id))
+    await supabase.from('roadmap_items').delete().eq('id', id)
+  }
+
   async function handleAdd(e) {
     e.preventDefault()
     if (!title.trim()) return
@@ -100,17 +106,26 @@ function RoadmapScreen() {
                     {item.description && (
                       <div className="roadmap-card-desc">{item.description}</div>
                     )}
-                    <select
-                      className="roadmap-card-status"
-                      value={item.status}
-                      onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                    >
-                      {STATUSES.map((s) => (
-                        <option key={s} value={s}>
-                          {s}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="roadmap-card-actions">
+                      <select
+                        className="roadmap-card-status"
+                        value={item.status}
+                        onChange={(e) => handleStatusChange(item.id, e.target.value)}
+                      >
+                        {STATUSES.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        className="roadmap-card-delete"
+                        onClick={() => handleDelete(item.id)}
+                      >
+                        삭제
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
