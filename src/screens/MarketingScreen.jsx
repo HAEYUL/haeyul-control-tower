@@ -1,30 +1,45 @@
-const items = [
-  '콘텐츠 제작 자동화',
-  '발행 자동화',
-  '리뷰 관리',
-  '성과 분석',
-  '리뷰 요청 자동화',
-  '고객 세그먼트별 맞춤 콘텐츠',
-  '트렌드·경쟁사 모니터링',
-  '체험단·인플루언서 관리',
-  '음식·공간 사진 AI 보정',
-  '외국인 고객 다국어 콘텐츠',
-]
+import { useEffect, useState } from 'react'
+import { supabase } from '../lib/supabaseClient'
+
+const BADGE_CLASS = {
+  완료: 'badge-linked',
+  진행중: 'badge-progress',
+  아이디어: 'badge-planned',
+}
 
 function MarketingScreen() {
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    supabase
+      .from('roadmap_items')
+      .select('*')
+      .eq('category', '마케팅SNS')
+      .order('created_at', { ascending: true })
+      .then(({ data }) => {
+        setItems(data ?? [])
+        setLoading(false)
+      })
+  }, [])
+
   return (
     <div className="page">
       <h1 className="page-title">마케팅·SNS</h1>
       <p className="page-subtitle">콘텐츠 제작부터 리뷰 관리까지 마케팅 자동화 아이디어 목록입니다.</p>
 
-      <ul className="list">
-        {items.map((title) => (
-          <li className="list-item" key={title}>
-            <span>{title}</span>
-            <span className="badge badge-planned">예정</span>
-          </li>
-        ))}
-      </ul>
+      {loading ? (
+        <p className="kanban-empty">불러오는 중...</p>
+      ) : (
+        <ul className="list">
+          {items.map((item) => (
+            <li className="list-item" key={item.id}>
+              <span>{item.title}</span>
+              <span className={`badge ${BADGE_CLASS[item.status]}`}>{item.status}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
