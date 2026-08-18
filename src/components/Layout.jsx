@@ -12,6 +12,7 @@ function Layout() {
   return (
     <div className="app-shell">
       <header className="app-header">
+        <img className="app-logo" src="/icons/pwa-192x192.png" alt="" />
         <span className="app-title">해율푸드 관제탑</span>
       </header>
 
