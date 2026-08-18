@@ -1,3 +1,6 @@
+import { supabase } from '../lib/supabaseClient'
+import { useAuth } from '../context/AuthContext'
+
 const stores = [
   { name: '해율만두전골', size: '300평', floor: '3층' },
   { name: '곤드레밥집', size: '170평', floor: '1층' },
@@ -5,6 +8,8 @@ const stores = [
 ]
 
 function SettingsScreen() {
+  const { session } = useAuth()
+
   return (
     <div className="page">
       <h1 className="page-title">설정</h1>
@@ -24,7 +29,20 @@ function SettingsScreen() {
       <ul className="list">
         <li className="list-item">
           <span>Supabase</span>
-          <span className="badge badge-planned">미연동</span>
+          <span className="badge badge-linked">연동됨</span>
+        </li>
+      </ul>
+
+      <h2 className="section-title">계정</h2>
+      <ul className="list">
+        <li className="list-item">
+          <span>로그인 계정</span>
+          <span className="list-item-meta">{session?.user?.email}</span>
+        </li>
+        <li>
+          <button className="logout-button" onClick={() => supabase.auth.signOut()}>
+            로그아웃
+          </button>
         </li>
       </ul>
     </div>
