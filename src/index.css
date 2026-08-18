@@ -265,3 +265,93 @@ a {
   color: #b5473f;
   cursor: pointer;
 }
+
+.add-button {
+  width: 100%;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-accent-dark);
+  cursor: pointer;
+}
+
+.add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  margin-bottom: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.add-form input,
+.add-form select {
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.add-form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.add-form-actions button {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.add-form-actions button[type='submit'] {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.add-form-actions button[type='button'] {
+  background: var(--color-bg);
+  color: var(--color-text-light);
+  border: 1px solid var(--color-border);
+}
+
+.roadmap-card {
+  padding: 12px;
+  margin-top: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg);
+}
+
+.roadmap-card-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.roadmap-card-desc {
+  font-size: 13px;
+  color: var(--color-text-light);
+  margin-top: 4px;
+}
+
+.roadmap-card-status {
+  margin-top: 8px;
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
