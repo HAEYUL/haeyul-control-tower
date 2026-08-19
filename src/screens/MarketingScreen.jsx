@@ -14,6 +14,8 @@ const TOOL_LINKS = [
   { keyword: '답글', to: '/marketing/review-reply' },
   { keyword: '콘텐츠', to: '/marketing/content-brief' },
   { keyword: 'AI 보정', to: '/marketing/content-brief' },
+  { keyword: '체험단', to: '/marketing/experience-group' },
+  { keyword: '인플루언서', to: '/marketing/experience-group' },
 ]
 
 function findToolLink(title) {

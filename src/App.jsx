@@ -10,6 +10,7 @@ import RoadmapScreen from './screens/RoadmapScreen'
 import SettingsScreen from './screens/SettingsScreen'
 import ReviewReplyScreen from './screens/ReviewReplyScreen'
 import ContentBriefScreen from './screens/ContentBriefScreen'
+import ExperienceGroupScreen from './screens/ExperienceGroupScreen'
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path="/marketing" element={<MarketingScreen />} />
             <Route path="/marketing/review-reply" element={<ReviewReplyScreen />} />
             <Route path="/marketing/content-brief" element={<ContentBriefScreen />} />
+            <Route path="/marketing/experience-group" element={<ExperienceGroupScreen />} />
             <Route path="/roadmap" element={<RoadmapScreen />} />
             <Route path="/settings" element={<SettingsScreen />} />
           </Route>
