@@ -9,6 +9,7 @@ import MarketingScreen from './screens/MarketingScreen'
 import RoadmapScreen from './screens/RoadmapScreen'
 import SettingsScreen from './screens/SettingsScreen'
 import ReviewReplyScreen from './screens/ReviewReplyScreen'
+import ContentBriefScreen from './screens/ContentBriefScreen'
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="/store" element={<StoreOpsScreen />} />
             <Route path="/marketing" element={<MarketingScreen />} />
             <Route path="/marketing/review-reply" element={<ReviewReplyScreen />} />
+            <Route path="/marketing/content-brief" element={<ContentBriefScreen />} />
             <Route path="/roadmap" element={<RoadmapScreen />} />
             <Route path="/settings" element={<SettingsScreen />} />
           </Route>

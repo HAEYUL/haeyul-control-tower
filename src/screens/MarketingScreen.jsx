@@ -8,7 +8,11 @@ const BADGE_CLASS = {
   아이디어: 'badge-planned',
 }
 
-const TOOL_LINKS = [{ keyword: '답글', to: '/marketing/review-reply' }]
+const TOOL_LINKS = [
+  { keyword: '답글', to: '/marketing/review-reply' },
+  { keyword: '콘텐츠', to: '/marketing/content-brief' },
+  { keyword: 'AI 보정', to: '/marketing/content-brief' },
+]
 
 function findToolLink(title) {
   return TOOL_LINKS.find((link) => title.includes(link.keyword))?.to
