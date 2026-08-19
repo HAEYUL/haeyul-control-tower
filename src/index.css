@@ -172,6 +172,16 @@ a {
   color: var(--color-text);
 }
 
+.review-form > select {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
 .review-textarea {
   font-size: 14px;
   padding: 12px;

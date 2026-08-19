@@ -6,14 +6,14 @@ export default async function handler(req, res) {
     return
   }
 
-  const { channel, type, rating, reviewText } = req.body ?? {}
-  if (!channel || !type || !reviewText?.trim()) {
-    res.status(400).json({ error: 'channel, type, reviewText가 필요합니다' })
+  const { store, channel, type, rating, reviewText } = req.body ?? {}
+  if (!store || !channel || !type || !reviewText?.trim()) {
+    res.status(400).json({ error: 'store, channel, type, reviewText가 필요합니다' })
     return
   }
 
   try {
-    const reply = await generateReviewReply({ channel, type, rating, reviewText })
+    const reply = await generateReviewReply({ store, channel, type, rating, reviewText })
     res.status(200).json({ reply })
   } catch (err) {
     console.error(err)

@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
+const STORES = ['해율만두전골', '곤드레밥집', '정담명가 남원추어탕']
+
 function ReviewReplyScreen() {
+  const [store, setStore] = useState(STORES[0])
   const [channel, setChannel] = useState('네이버')
   const [type, setType] = useState('영수증리뷰')
   const [rating, setRating] = useState('')
@@ -25,6 +28,7 @@ function ReviewReplyScreen() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          store,
           channel,
           type,
           rating: rating || null,
@@ -57,6 +61,14 @@ function ReviewReplyScreen() {
       </p>
 
       <form className="review-form" onSubmit={handleGenerate}>
+        <select value={store} onChange={(e) => setStore(e.target.value)}>
+          {STORES.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+
         <div className="review-form-row">
           <select value={channel} onChange={(e) => setChannel(e.target.value)}>
             <option value="네이버">네이버</option>
