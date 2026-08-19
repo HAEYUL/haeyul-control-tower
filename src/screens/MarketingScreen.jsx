@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 
 const BADGE_CLASS = {
   완료: 'badge-linked',
   진행중: 'badge-progress',
   아이디어: 'badge-planned',
+}
+
+const TOOL_LINKS = {
+  '리뷰 관리': '/marketing/review-reply',
 }
 
 function MarketingScreen() {
@@ -32,12 +37,25 @@ function MarketingScreen() {
         <p className="kanban-empty">불러오는 중...</p>
       ) : (
         <ul className="list">
-          {items.map((item) => (
-            <li className="list-item" key={item.id}>
-              <span>{item.title}</span>
+          {items.map((item) => {
+            const badge = (
               <span className={`badge ${BADGE_CLASS[item.status]}`}>{item.status}</span>
-            </li>
-          ))}
+            )
+            const linkTo = TOOL_LINKS[item.title]
+
+            return (
+              <li className="list-item" key={item.id}>
+                {linkTo ? (
+                  <Link className="list-item-link" to={linkTo}>
+                    <span>{item.title}</span>
+                  </Link>
+                ) : (
+                  <span>{item.title}</span>
+                )}
+                {badge}
+              </li>
+            )
+          })}
         </ul>
       )}
     </div>

@@ -8,6 +8,7 @@ import StoreOpsScreen from './screens/StoreOpsScreen'
 import MarketingScreen from './screens/MarketingScreen'
 import RoadmapScreen from './screens/RoadmapScreen'
 import SettingsScreen from './screens/SettingsScreen'
+import ReviewReplyScreen from './screens/ReviewReplyScreen'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path="/" element={<HomeScreen />} />
             <Route path="/store" element={<StoreOpsScreen />} />
             <Route path="/marketing" element={<MarketingScreen />} />
+            <Route path="/marketing/review-reply" element={<ReviewReplyScreen />} />
             <Route path="/roadmap" element={<RoadmapScreen />} />
             <Route path="/settings" element={<SettingsScreen />} />
           </Route>
