@@ -4,11 +4,8 @@ create table if not exists experience_group (
   store text not null, -- '해율만두전골' | '곤드레밥집' | '정담명가 남원추어탕'
   name text not null,
   phone text not null,
-  grade text,
-  address text,
-  review_date date,
   link_url text,
-  visited boolean not null default true,
+  channel text, -- '블로그' | '블로그+클립' | '인스타그램' | '유튜브' | '릴스' | '틱톡' | '쇼츠' | '클립'
   created_at timestamptz not null default now()
 );
 

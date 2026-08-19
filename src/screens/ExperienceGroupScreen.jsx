@@ -4,17 +4,11 @@ import { supabase } from '../lib/supabaseClient'
 import { parseExperienceGroupText } from '../lib/parseExperienceGroup'
 
 const STORES = ['해율만두전골', '곤드레밥집', '정담명가 남원추어탕']
+const CHANNELS = ['블로그', '블로그+클립', '인스타그램', '유튜브', '릴스', '틱톡', '쇼츠', '클립']
 
 function downloadCsv(rows, filename) {
-  const headers = ['이름', '연락처', '등급', '주소', '리뷰등록일', '방문여부']
-  const lines = rows.map((r) => [
-    r.name,
-    r.phone,
-    r.grade || '',
-    r.address || '',
-    r.review_date || '',
-    r.visited ? '방문' : '미방문',
-  ])
+  const headers = ['이름', '연락처', '채널', 'URL링크']
+  const lines = rows.map((r) => [r.name, r.phone, r.channel || '', r.link_url || ''])
   const csv = [headers, ...lines]
     .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
     .join('\r\n')
@@ -30,14 +24,15 @@ function downloadCsv(rows, filename) {
 
 function ExperienceGroupScreen() {
   const [store, setStore] = useState(STORES[0])
+  const [channel, setChannel] = useState(CHANNELS[0])
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
 
   const [pasteText, setPasteText] = useState('')
   const [preview, setPreview] = useState(null)
+  const [importError, setImportError] = useState('')
 
   const [selected, setSelected] = useState(new Set())
-  const [importError, setImportError] = useState('')
 
   const [linkEditId, setLinkEditId] = useState(null)
   const [linkDraft, setLinkDraft] = useState('')
@@ -53,7 +48,7 @@ function ExperienceGroupScreen() {
       .from('experience_group')
       .select('*')
       .eq('store', forStore)
-      .order('review_date', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: false })
     setItems(data ?? [])
     setLoading(false)
   }
@@ -79,7 +74,7 @@ function ExperienceGroupScreen() {
       return
     }
 
-    const rows = usable.map((row) => ({ ...row, store, visited: true }))
+    const rows = usable.map((row) => ({ ...row, store, channel }))
     const { error } = await supabase.from('experience_group').insert(rows)
 
     if (error) {
@@ -96,14 +91,6 @@ function ExperienceGroupScreen() {
     setPasteText('')
   }
 
-  async function toggleVisited(item) {
-    const nextVisited = !item.visited
-    setItems((prev) =>
-      prev.map((i) => (i.id === item.id ? { ...i, visited: nextVisited } : i)),
-    )
-    await supabase.from('experience_group').update({ visited: nextVisited }).eq('id', item.id)
-  }
-
   function toggleSelected(id) {
     setSelected((prev) => {
       const next = new Set(prev)
@@ -111,6 +98,17 @@ function ExperienceGroupScreen() {
       else next.add(id)
       return next
     })
+  }
+
+  async function handleDelete(item) {
+    if (!confirm(`${item.name}님을 삭제할까요?`)) return
+    setItems((prev) => prev.filter((i) => i.id !== item.id))
+    setSelected((prev) => {
+      const next = new Set(prev)
+      next.delete(item.id)
+      return next
+    })
+    await supabase.from('experience_group').delete().eq('id', item.id)
   }
 
   function openLinkEdit(item) {
@@ -138,7 +136,7 @@ function ExperienceGroupScreen() {
         ← 마케팅·SNS
       </Link>
       <h1 className="page-title">체험단·인플루언서 관리</h1>
-      <p className="page-subtitle">명단을 등록하고, 방문 여부를 관리하고, 엑셀로 내려받을 수 있습니다.</p>
+      <p className="page-subtitle">명단을 등록하고 엑셀로 내려받을 수 있습니다.</p>
 
       <div className="store-tabs">
         {STORES.map((s) => (
@@ -155,9 +153,16 @@ function ExperienceGroupScreen() {
 
       <h2 className="section-title">명단 붙여넣기</h2>
       <div className="review-form">
+        <select value={channel} onChange={(e) => setChannel(e.target.value)}>
+          {CHANNELS.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
         <textarea
           className="review-textarea"
-          placeholder="리뷰노트 등에서 표를 복사해서 붙여넣으세요 (이름, 연락처, 등급, 주소, 리뷰등록일 자동 인식)"
+          placeholder="리뷰노트 등에서 표를 복사해서 붙여넣으세요 (이름, 연락처 자동 인식)"
           value={pasteText}
           onChange={(e) => setPasteText(e.target.value)}
           rows={5}
@@ -176,8 +181,7 @@ function ExperienceGroupScreen() {
               {preview.map((row, i) => (
                 <li className="list-item" key={i}>
                   <span className="list-item-meta">
-                    {row.name || '(이름 없음)'} · {row.phone || '(연락처 없음)'} · {row.grade || '-'} ·{' '}
-                    {row.address || '-'} · {row.review_date || '-'}
+                    {row.name || '(이름 없음)'} · {row.phone || '(연락처 없음)'}
                   </span>
                   <button type="button" className="roadmap-card-delete" onClick={() => removePreviewRow(i)}>
                     제외
@@ -188,7 +192,7 @@ function ExperienceGroupScreen() {
           )}
           {preview.length > 0 && (
             <button type="button" onClick={handleImport} style={{ marginTop: 10 }}>
-              {store}에 {preview.length}명 등록
+              {store}({channel})에 {preview.length}명 등록
             </button>
           )}
           {importError && (
@@ -221,11 +225,9 @@ function ExperienceGroupScreen() {
 
               <div className="experience-info">
                 <div className="experience-name">
-                  {item.name} <span className="list-item-meta">{item.grade}</span>
+                  {item.name} <span className="list-item-meta">{item.channel}</span>
                 </div>
-                <div className="list-item-meta">
-                  {item.phone} · {item.address || '-'} · {item.review_date || '-'}
-                </div>
+                <div className="list-item-meta">{item.phone}</div>
                 {linkEditId === item.id ? (
                   <div className="experience-link-edit">
                     <input
@@ -254,10 +256,13 @@ function ExperienceGroupScreen() {
                 )}
               </div>
 
-              <label className="experience-visited">
-                <input type="checkbox" checked={item.visited} onChange={() => toggleVisited(item)} />
-                방문
-              </label>
+              <button
+                type="button"
+                className="roadmap-card-delete"
+                onClick={() => handleDelete(item)}
+              >
+                삭제
+              </button>
             </li>
           ))}
         </ul>
