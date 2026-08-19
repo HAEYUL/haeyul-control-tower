@@ -8,8 +8,10 @@ const BADGE_CLASS = {
   아이디어: 'badge-planned',
 }
 
-const TOOL_LINKS = {
-  '리뷰 답글쓰기': '/marketing/review-reply',
+const TOOL_LINKS = [{ keyword: '답글', to: '/marketing/review-reply' }]
+
+function findToolLink(title) {
+  return TOOL_LINKS.find((link) => title.includes(link.keyword))?.to
 }
 
 function MarketingScreen() {
@@ -41,7 +43,7 @@ function MarketingScreen() {
             const badge = (
               <span className={`badge ${BADGE_CLASS[item.status]}`}>{item.status}</span>
             )
-            const linkTo = TOOL_LINKS[item.title]
+            const linkTo = findToolLink(item.title)
 
             return (
               <li className="list-item" key={item.id}>
