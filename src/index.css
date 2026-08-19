@@ -263,40 +263,65 @@ a {
   color: #fff;
 }
 
-.experience-row {
-  align-items: flex-start;
-  gap: 10px;
+.experience-item {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.experience-checkbox {
-  padding-top: 3px;
+.experience-item:last-child {
+  border-bottom: none;
 }
 
-.experience-info {
-  flex: 1;
+.experience-row-compact {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.experience-name {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.experience-visited {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.experience-name-compact {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.experience-phone-compact {
   color: var(--color-text-light);
   white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.experience-channel-select {
+  font-size: 11px;
+  padding: 4px 2px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  max-width: 76px;
+}
+
+.experience-box-button {
+  font-size: 11px;
+  padding: 5px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-accent-dark);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.experience-box-button-danger {
+  color: #b5473f;
 }
 
 .experience-link-edit {
   display: flex;
   gap: 6px;
+  margin-top: 8px;
 }
 
 .experience-link-edit input {

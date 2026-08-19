@@ -100,6 +100,11 @@ function ExperienceGroupScreen() {
     })
   }
 
+  async function updateChannel(item, value) {
+    setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, channel: value } : i)))
+    await supabase.from('experience_group').update({ channel: value }).eq('id', item.id)
+  }
+
   async function handleDelete(item) {
     if (!confirm(`${item.name}님을 삭제할까요?`)) return
     setItems((prev) => prev.filter((i) => i.id !== item.id))
@@ -214,55 +219,69 @@ function ExperienceGroupScreen() {
       ) : (
         <ul className="list">
           {items.map((item) => (
-            <li className="list-item experience-row" key={item.id}>
-              <label className="experience-checkbox">
+            <li className="experience-item" key={item.id}>
+              <div className="experience-row-compact">
                 <input
                   type="checkbox"
                   checked={selected.has(item.id)}
                   onChange={() => toggleSelected(item.id)}
                 />
-              </label>
-
-              <div className="experience-info">
-                <div className="experience-name">
-                  {item.name} <span className="list-item-meta">{item.channel}</span>
-                </div>
-                <div className="list-item-meta">{item.phone}</div>
-                {linkEditId === item.id ? (
-                  <div className="experience-link-edit">
-                    <input
-                      type="text"
-                      value={linkDraft}
-                      onChange={(e) => setLinkDraft(e.target.value)}
-                      placeholder="https://..."
-                    />
-                    <button type="button" onClick={() => saveLink(item)}>
-                      저장
-                    </button>
-                  </div>
-                ) : item.link_url ? (
+                <span className="experience-name-compact">{item.name}</span>
+                <span className="experience-phone-compact">{item.phone}</span>
+                <select
+                  className="experience-channel-select"
+                  value={item.channel || ''}
+                  onChange={(e) => updateChannel(item, e.target.value)}
+                >
+                  <option value="" disabled>
+                    채널
+                  </option>
+                  {CHANNELS.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+                {item.link_url ? (
                   <a
-                    className="list-item-meta"
+                    className="experience-box-button"
                     href={item.link_url}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {item.link_url}
+                    링크
                   </a>
                 ) : (
-                  <button type="button" className="roadmap-card-delete" onClick={() => openLinkEdit(item)}>
-                    링크 추가
+                  <button
+                    type="button"
+                    className="experience-box-button"
+                    onClick={() => openLinkEdit(item)}
+                  >
+                    링크추가
                   </button>
                 )}
+                <button
+                  type="button"
+                  className="experience-box-button experience-box-button-danger"
+                  onClick={() => handleDelete(item)}
+                >
+                  삭제
+                </button>
               </div>
 
-              <button
-                type="button"
-                className="roadmap-card-delete"
-                onClick={() => handleDelete(item)}
-              >
-                삭제
-              </button>
+              {linkEditId === item.id && (
+                <div className="experience-link-edit">
+                  <input
+                    type="text"
+                    value={linkDraft}
+                    onChange={(e) => setLinkDraft(e.target.value)}
+                    placeholder="https://..."
+                  />
+                  <button type="button" onClick={() => saveLink(item)}>
+                    저장
+                  </button>
+                </div>
+              )}
             </li>
           ))}
         </ul>
