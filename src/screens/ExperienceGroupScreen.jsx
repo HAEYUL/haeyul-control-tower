@@ -37,6 +37,7 @@ function ExperienceGroupScreen() {
   const [preview, setPreview] = useState(null)
 
   const [selected, setSelected] = useState(new Set())
+  const [importError, setImportError] = useState('')
 
   const [linkEditId, setLinkEditId] = useState(null)
   const [linkDraft, setLinkDraft] = useState('')
@@ -68,8 +69,28 @@ function ExperienceGroupScreen() {
 
   async function handleImport() {
     if (!preview?.length) return
-    const rows = preview.map((row) => ({ ...row, store, visited: true }))
-    await supabase.from('experience_group').insert(rows)
+    setImportError('')
+
+    const usable = preview.filter((row) => row.name && row.phone)
+    const skipped = preview.length - usable.length
+
+    if (usable.length === 0) {
+      setImportError('이름·연락처가 모두 인식된 행이 없어 등록할 수 없습니다.')
+      return
+    }
+
+    const rows = usable.map((row) => ({ ...row, store, visited: true }))
+    const { error } = await supabase.from('experience_group').insert(rows)
+
+    if (error) {
+      setImportError(`등록 실패: ${error.message}`)
+      return
+    }
+
+    if (skipped > 0) {
+      setImportError(`${skipped}명은 이름 또는 연락처가 인식되지 않아 제외되었습니다.`)
+    }
+
     await loadItems(store)
     setPreview(null)
     setPasteText('')
@@ -169,6 +190,11 @@ function ExperienceGroupScreen() {
             <button type="button" onClick={handleImport} style={{ marginTop: 10 }}>
               {store}에 {preview.length}명 등록
             </button>
+          )}
+          {importError && (
+            <p className="login-error" style={{ marginTop: 8 }}>
+              {importError}
+            </p>
           )}
         </div>
       )}
