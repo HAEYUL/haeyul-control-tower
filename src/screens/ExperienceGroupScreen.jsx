@@ -39,7 +39,6 @@ function ExperienceGroupScreen() {
 
   useEffect(() => {
     loadItems(store)
-    setSelected(new Set())
   }, [store])
 
   async function loadItems(forStore) {
@@ -50,6 +49,7 @@ function ExperienceGroupScreen() {
       .eq('store', forStore)
       .order('created_at', { ascending: false })
     setItems(data ?? [])
+    setSelected(new Set((data ?? []).map((i) => i.id)))
     setLoading(false)
   }
 
@@ -130,7 +130,7 @@ function ExperienceGroupScreen() {
   }
 
   function handleDownload() {
-    const rows = selected.size > 0 ? items.filter((i) => selected.has(i.id)) : items
+    const rows = items.filter((i) => selected.has(i.id))
     if (rows.length === 0) return
     downloadCsv(rows, `${store}_체험단명단.csv`)
   }
@@ -289,10 +289,10 @@ function ExperienceGroupScreen() {
 
       <h2 className="section-title">명단 다운로드</h2>
       <p className="page-subtitle">
-        {selected.size > 0 ? `선택한 ${selected.size}명` : `${store} 전체 ${items.length}명`}을 CSV로
-        내려받아 알리고 등에서 직접 발송하세요.
+        체크박스는 기본으로 전체 선택되어 있습니다. 제외하고 싶은 사람만 체크를 해제한 뒤
+        {' '}{selected.size}명을 CSV로 내려받아 알리고 등에서 직접 발송하세요.
       </p>
-      <button type="button" onClick={handleDownload} disabled={items.length === 0}>
+      <button type="button" onClick={handleDownload} disabled={selected.size === 0}>
         엑셀(CSV) 다운로드
       </button>
     </div>
