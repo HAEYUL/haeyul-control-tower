@@ -9,7 +9,7 @@ const BADGE_CLASS = {
 }
 
 const TOOL_LINKS = {
-  '리뷰 관리': '/marketing/review-reply',
+  '리뷰 답글쓰기': '/marketing/review-reply',
 }
 
 function MarketingScreen() {

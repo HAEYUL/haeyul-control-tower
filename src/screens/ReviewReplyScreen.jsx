@@ -51,7 +51,7 @@ function ReviewReplyScreen() {
       <Link to="/marketing" className="back-link">
         ← 마케팅·SNS
       </Link>
-      <h1 className="page-title">리뷰 관리</h1>
+      <h1 className="page-title">리뷰 답글쓰기</h1>
       <p className="page-subtitle">
         네이버·구글 영수증리뷰나 블로그 글 원문을 붙여넣으면 답글 초안을 만들어드립니다.
       </p>
