@@ -8,6 +8,8 @@ const BADGE_CLASS = {
   아이디어: 'badge-planned',
 }
 
+const STATUS_ORDER = { 완료: 0, 진행중: 1, 아이디어: 2 }
+
 const TOOL_LINKS = [
   { keyword: '답글', to: '/marketing/review-reply' },
   { keyword: '콘텐츠', to: '/marketing/content-brief' },
@@ -29,7 +31,10 @@ function MarketingScreen() {
       .eq('category', '마케팅SNS')
       .order('created_at', { ascending: true })
       .then(({ data }) => {
-        setItems(data ?? [])
+        const sorted = [...(data ?? [])].sort(
+          (a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status],
+        )
+        setItems(sorted)
         setLoading(false)
       })
   }, [])
