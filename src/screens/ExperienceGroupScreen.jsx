@@ -5,6 +5,29 @@ import { parseExperienceGroupText } from '../lib/parseExperienceGroup'
 
 const STORES = ['해율만두전골', '곤드레밥집', '정담명가 남원추어탕']
 
+function downloadCsv(rows, filename) {
+  const headers = ['이름', '연락처', '등급', '주소', '리뷰등록일', '방문여부']
+  const lines = rows.map((r) => [
+    r.name,
+    r.phone,
+    r.grade || '',
+    r.address || '',
+    r.review_date || '',
+    r.visited ? '방문' : '미방문',
+  ])
+  const csv = [headers, ...lines]
+    .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    .join('\r\n')
+
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 function ExperienceGroupScreen() {
   const [store, setStore] = useState(STORES[0])
   const [items, setItems] = useState([])
@@ -14,9 +37,6 @@ function ExperienceGroupScreen() {
   const [preview, setPreview] = useState(null)
 
   const [selected, setSelected] = useState(new Set())
-  const [message, setMessage] = useState('')
-  const [sending, setSending] = useState(false)
-  const [sendResult, setSendResult] = useState('')
 
   const [linkEditId, setLinkEditId] = useState(null)
   const [linkDraft, setLinkDraft] = useState('')
@@ -24,7 +44,6 @@ function ExperienceGroupScreen() {
   useEffect(() => {
     loadItems(store)
     setSelected(new Set())
-    setSendResult('')
   }, [store])
 
   async function loadItems(forStore) {
@@ -33,7 +52,7 @@ function ExperienceGroupScreen() {
       .from('experience_group')
       .select('*')
       .eq('store', forStore)
-      .order('created_at', { ascending: false })
+      .order('review_date', { ascending: false, nullsFirst: false })
     setItems(data ?? [])
     setLoading(false)
   }
@@ -50,8 +69,8 @@ function ExperienceGroupScreen() {
   async function handleImport() {
     if (!preview?.length) return
     const rows = preview.map((row) => ({ ...row, store, visited: true }))
-    const { data } = await supabase.from('experience_group').insert(rows).select()
-    setItems((prev) => [...(data ?? []), ...prev])
+    await supabase.from('experience_group').insert(rows)
+    await loadItems(store)
     setPreview(null)
     setPasteText('')
   }
@@ -86,33 +105,10 @@ function ExperienceGroupScreen() {
     setLinkEditId(null)
   }
 
-  async function handleSend() {
-    const recipients = items.filter((i) => selected.has(i.id))
-    if (recipients.length === 0 || !message.trim()) return
-    if (!confirm(`${recipients.length}명에게 문자를 발송할까요?`)) return
-
-    setSending(true)
-    setSendResult('')
-
-    try {
-      const res = await fetch('/api/send-sms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          receivers: recipients.map((r) => r.phone),
-          message: message.trim(),
-        }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || '발송에 실패했습니다')
-      setSendResult(`발송 완료 (성공 ${data.success_cnt}건 / 실패 ${data.error_cnt}건)`)
-      setSelected(new Set())
-      setMessage('')
-    } catch (err) {
-      setSendResult(`오류: ${err.message}`)
-    } finally {
-      setSending(false)
-    }
+  function handleDownload() {
+    const rows = selected.size > 0 ? items.filter((i) => selected.has(i.id)) : items
+    if (rows.length === 0) return
+    downloadCsv(rows, `${store}_체험단명단.csv`)
   }
 
   return (
@@ -121,7 +117,7 @@ function ExperienceGroupScreen() {
         ← 마케팅·SNS
       </Link>
       <h1 className="page-title">체험단·인플루언서 관리</h1>
-      <p className="page-subtitle">명단을 등록하고, 방문 여부를 관리하고, 문자를 보낼 수 있습니다.</p>
+      <p className="page-subtitle">명단을 등록하고, 방문 여부를 관리하고, 엑셀로 내려받을 수 있습니다.</p>
 
       <div className="store-tabs">
         {STORES.map((s) => (
@@ -241,20 +237,14 @@ function ExperienceGroupScreen() {
         </ul>
       )}
 
-      <h2 className="section-title">문자 발송 ({selected.size}명 선택됨)</h2>
-      <div className="review-form">
-        <textarea
-          className="review-textarea"
-          placeholder="보낼 메시지를 직접 입력하세요"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          rows={4}
-        />
-        {sendResult && <p className="login-error">{sendResult}</p>}
-        <button type="button" onClick={handleSend} disabled={sending || selected.size === 0 || !message.trim()}>
-          {sending ? '발송 중...' : `${selected.size}명에게 문자 발송`}
-        </button>
-      </div>
+      <h2 className="section-title">명단 다운로드</h2>
+      <p className="page-subtitle">
+        {selected.size > 0 ? `선택한 ${selected.size}명` : `${store} 전체 ${items.length}명`}을 CSV로
+        내려받아 알리고 등에서 직접 발송하세요.
+      </p>
+      <button type="button" onClick={handleDownload} disabled={items.length === 0}>
+        엑셀(CSV) 다운로드
+      </button>
     </div>
   )
 }
