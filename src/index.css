@@ -279,6 +279,20 @@ a {
   font-size: 12px;
 }
 
+.experience-star {
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px;
+  border: none;
+  background: transparent;
+  color: var(--color-border);
+  cursor: pointer;
+}
+
+.experience-star.active {
+  color: #d99a2b;
+}
+
 .experience-name-compact {
   font-weight: 600;
   white-space: nowrap;

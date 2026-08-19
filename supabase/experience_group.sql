@@ -6,6 +6,7 @@ create table if not exists experience_group (
   phone text not null,
   link_url text,
   channel text, -- '블로그' | '블로그+클립' | '인스타그램' | '유튜브' | '릴스' | '틱톡' | '쇼츠' | '클립'
+  is_influencer boolean not null default false,
   created_at timestamptz not null default now()
 );
 

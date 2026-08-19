@@ -7,8 +7,14 @@ const STORES = ['해율만두전골', '곤드레밥집', '정담명가 남원추
 const CHANNELS = ['블로그', '블로그+클립', '인스타그램', '유튜브', '릴스', '틱톡', '쇼츠', '클립']
 
 function downloadCsv(rows, filename) {
-  const headers = ['이름', '연락처', '채널', 'URL링크']
-  const lines = rows.map((r) => [r.name, r.phone, r.channel || '', r.link_url || ''])
+  const headers = ['이름', '연락처', '채널', 'URL링크', '인플루언서']
+  const lines = rows.map((r) => [
+    r.name,
+    r.phone,
+    r.channel || '',
+    r.link_url || '',
+    r.is_influencer ? 'Y' : '',
+  ])
   const csv = [headers, ...lines]
     .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
     .join('\r\n')
@@ -98,6 +104,12 @@ function ExperienceGroupScreen() {
       else next.add(id)
       return next
     })
+  }
+
+  async function toggleInfluencer(item) {
+    const next = !item.is_influencer
+    setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, is_influencer: next } : i)))
+    await supabase.from('experience_group').update({ is_influencer: next }).eq('id', item.id)
   }
 
   async function updateChannel(item, value) {
@@ -226,6 +238,14 @@ function ExperienceGroupScreen() {
                   checked={selected.has(item.id)}
                   onChange={() => toggleSelected(item.id)}
                 />
+                <button
+                  type="button"
+                  className={`experience-star${item.is_influencer ? ' active' : ''}`}
+                  onClick={() => toggleInfluencer(item)}
+                  title="인플루언서 표시"
+                >
+                  ★
+                </button>
                 <span className="experience-name-compact">{item.name}</span>
                 <span className="experience-phone-compact">{item.phone}</span>
                 <select
