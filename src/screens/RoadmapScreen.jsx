@@ -10,6 +10,8 @@ function RoadmapScreen() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState('매장운영')
+  const [editingId, setEditingId] = useState(null)
+  const [editTitle, setEditTitle] = useState('')
 
   useEffect(() => {
     loadItems()
@@ -28,6 +30,19 @@ function RoadmapScreen() {
   async function handleStatusChange(id, status) {
     setItems((prev) => prev.map((item) => (item.id === id ? { ...item, status } : item)))
     await supabase.from('roadmap_items').update({ status }).eq('id', id)
+  }
+
+  function startEdit(item) {
+    setEditingId(item.id)
+    setEditTitle(item.title)
+  }
+
+  async function saveEdit(id) {
+    const nextTitle = editTitle.trim()
+    if (!nextTitle) return
+    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, title: nextTitle } : item)))
+    await supabase.from('roadmap_items').update({ title: nextTitle }).eq('id', id)
+    setEditingId(null)
   }
 
   async function handleDelete(id) {
@@ -102,7 +117,24 @@ function RoadmapScreen() {
                 {statusItems.length === 0 && <p className="kanban-empty">항목 없음</p>}
                 {statusItems.map((item) => (
                   <div className="roadmap-card" key={item.id}>
-                    <div className="roadmap-card-title">{item.title}</div>
+                    {editingId === item.id ? (
+                      <div className="roadmap-card-edit">
+                        <input
+                          type="text"
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                          autoFocus
+                        />
+                        <button type="button" onClick={() => saveEdit(item.id)}>
+                          저장
+                        </button>
+                        <button type="button" onClick={() => setEditingId(null)}>
+                          취소
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="roadmap-card-title">{item.title}</div>
+                    )}
                     {item.description && (
                       <div className="roadmap-card-desc">{item.description}</div>
                     )}
@@ -118,6 +150,13 @@ function RoadmapScreen() {
                           </option>
                         ))}
                       </select>
+                      <button
+                        type="button"
+                        className="roadmap-card-delete"
+                        onClick={() => startEdit(item)}
+                      >
+                        수정
+                      </button>
                       <button
                         type="button"
                         className="roadmap-card-delete"
