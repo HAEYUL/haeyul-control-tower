@@ -27,8 +27,8 @@ function StoreOpsScreen() {
               <li className="list-item" key={item.title}>
                 <a className="list-item-link" href={item.url} target="_blank" rel="noopener noreferrer">
                   <span>{item.title}</span>
+                  {badge}
                 </a>
-                {badge}
               </li>
             )
           }

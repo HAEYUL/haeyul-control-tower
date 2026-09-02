@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet } from 'react-router-dom'
 
 const navItems = [
   { to: '/', label: '홈', end: true },
@@ -11,10 +11,10 @@ const navItems = [
 function Layout() {
   return (
     <div className="app-shell">
-      <header className="app-header">
+      <Link className="app-header" to="/">
         <img className="app-logo" src="/icons/pwa-192x192.png" alt="" />
         <span className="app-title">해율푸드 관제탑</span>
-      </header>
+      </Link>
 
       <main className="app-main">
         <Outlet />

@@ -61,11 +61,14 @@ function MarketingScreen() {
                 {linkTo ? (
                   <Link className="list-item-link" to={linkTo}>
                     <span>{item.title}</span>
+                    {badge}
                   </Link>
                 ) : (
-                  <span>{item.title}</span>
+                  <>
+                    <span>{item.title}</span>
+                    {badge}
+                  </>
                 )}
-                {badge}
               </li>
             )
           })}
