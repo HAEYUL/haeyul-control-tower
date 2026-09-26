@@ -2,6 +2,7 @@ const items = [
   { title: '매입·정산', status: '연결됨', url: 'https://haeyul-cost-calculator.vercel.app/' },
   { title: '원가·레시피', status: '연결됨', url: 'https://haeyul-cost-calculator.vercel.app/' },
   { title: '해율통합여권', status: '연결됨', url: 'https://haeyul-passport.vercel.app/admin' },
+  { title: '정담명가 주차정산', status: '연결됨', url: 'https://claude.ai/artifact/X3eMp73EmhiCkZ2h6VzY9p' },
   { title: '발주·재고', status: '예정' },
   { title: '인력·근태', status: '예정' },
   { title: '위생·품질', status: '예정' },
